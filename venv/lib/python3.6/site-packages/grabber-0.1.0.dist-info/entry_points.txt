@@ -1,0 +1,3 @@
+[console_scripts]
+grabber = grabber.grabber:run
+
