@@ -8084,3 +8084,1741 @@ class TbCaracteristicaJuridica(models.Model):
     class Meta:
         managed = False
         db_table = 'tb_caracteristica_juridica'
+
+
+class TbCardapio(models.Model):
+    cd_cardapio = models.IntegerField(primary_key=True)
+    nm_cardapio = models.CharField(max_length=60)
+    cd_um = models.FloatField(blank=True, null=True)
+    vl_cardapio = models.FloatField(blank=True, null=True)
+    dt_vigencia = models.DateField(blank=True, null=True)
+    cd_tipo_cardapio = models.ForeignKey('TbTipoCardapio', models.DO_NOTHING, db_column='cd_tipo_cardapio')
+    cd_filial = models.ForeignKey('TbFilial', models.DO_NOTHING, db_column='cd_filial')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cardapio'
+
+
+class TbCardapioDietaData(models.Model):
+    dt_cardapio = models.DateField()
+    cd_dieta = models.IntegerField(primary_key=True)
+    dt_elaboracao = models.DateField(blank=True, null=True)
+    dt_revisao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cardapio_dieta_data'
+        unique_together = (('cd_dieta', 'dt_cardapio'),)
+
+
+class TbCardapioDietaDia(models.Model):
+    cd_dieta = models.IntegerField(primary_key=True)
+    cd_cardapio = models.IntegerField()
+    qt_diaria = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cardapio_dieta_dia'
+        unique_together = (('cd_dieta', 'cd_cardapio'),)
+
+
+class TbCardapioSemanal(models.Model):
+    dt_cardapio = models.DateField(primary_key=True)
+    cd_cardapio = models.ForeignKey(TbCardapio, models.DO_NOTHING, db_column='cd_cardapio')
+    cd_ordem = models.IntegerField()
+    dt_elaboracao_cardapio = models.DateField()
+    dt_revisao_cardapio = models.DateField(blank=True, null=True)
+    cd_dieta = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cardapio_semanal'
+        unique_together = (('dt_cardapio', 'cd_cardapio', 'cd_ordem'),)
+
+
+class TbCarroParadaAud(models.Model):
+    cd_setor = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor', primary_key=True)
+    dt_aud = models.DateField()
+    cd_usuario_farm = models.ForeignKey('TbOperador', models.DO_NOTHING, db_column='cd_usuario_farm')
+    cd_usuario_enfe = models.ForeignKey('TbOperador', models.DO_NOTHING, db_column='cd_usuario_enfe')
+    ds_obs = models.CharField(max_length=2000, blank=True, null=True)
+    cd_lacre_rompido = models.FloatField(blank=True, null=True)
+    cd_lacre_novo = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_carro_parada_aud'
+        unique_together = (('cd_setor', 'dt_aud'),)
+
+
+class TbCarteiraBanco(models.Model):
+    cd_carteira = models.IntegerField(primary_key=True)
+    cd_banco = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_banco')
+    cd_agencia = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_agencia')
+    cd_carteira_cobranca = models.ForeignKey('TbCarteiraCobranca', models.DO_NOTHING, db_column='cd_carteira_cobranca')
+    cd_carteira_banco = models.CharField(max_length=10)
+    cd_variacao_banco = models.CharField(max_length=10)
+    fl_numeracao = models.CharField(max_length=1)
+    fl_emissao = models.CharField(max_length=1)
+    fl_expedicao = models.CharField(max_length=1)
+    ds_carteira = models.CharField(max_length=45)
+    cd_cedente = models.CharField(max_length=9)
+    nu_convenio = models.CharField(max_length=10)
+    qt_prazo_maximo = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_carteira_banco'
+
+
+class TbCarteiraCobranca(models.Model):
+    cd_carteira_cobranca = models.IntegerField(primary_key=True)
+    ds_carteira_cobranca = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_carteira_cobranca'
+
+
+class TbCategoriaCid10(models.Model):
+    cd_grupo_cid10 = models.ForeignKey('TbSubgrupoCid10', models.DO_NOTHING, db_column='cd_grupo_cid10', primary_key=True)
+    cd_subgrupo_cid10 = models.ForeignKey('TbSubgrupoCid10', models.DO_NOTHING, db_column='cd_subgrupo_cid10')
+    cd_categoria_cid10 = models.CharField(max_length=4)
+    nm_categoria_cid10 = models.CharField(max_length=125)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_categoria_cid10'
+        unique_together = (('cd_grupo_cid10', 'cd_subgrupo_cid10', 'cd_categoria_cid10'),)
+
+
+class TbCaucaoValor(models.Model):
+    id = models.FloatField(primary_key=True)
+    cd_convenio = models.ForeignKey('TmConvenio', models.DO_NOTHING, db_column='cd_convenio')
+    descricao = models.CharField(max_length=45)
+    vlr_caucao = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    observacao = models.CharField(max_length=2000, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_caucao_valor'
+        unique_together = (('cd_convenio', 'descricao'),)
+
+
+class TbCausaObito(models.Model):
+    cd_causa_obito = models.IntegerField(primary_key=True)
+    ds_causa_obito = models.CharField(max_length=200)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_causa_obito'
+
+
+class TbCbo(models.Model):
+    cd_subgrupo = models.ForeignKey('TbSubgrupoCbo', models.DO_NOTHING, db_column='cd_subgrupo')
+    cd_cbo = models.CharField(primary_key=True, max_length=8)
+    nm_cbo = models.CharField(max_length=240, blank=True, null=True)
+    nr_cbo = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cbo'
+
+
+class TbCboS(models.Model):
+    cd_cbo_s = models.CharField(max_length=7)
+    ds_cbo_s = models.CharField(max_length=80)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cbo_s'
+
+
+class TbCcUnidadePde(models.Model):
+    cd_centro = models.FloatField(primary_key=True)
+    ds_centro = models.CharField(max_length=256)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cc_unidade_pde'
+
+
+class TbCedenteSacado(models.Model):
+    cd_pessoa = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_pessoa', primary_key=True)
+    cd_tipo_cedente_sacado = models.ForeignKey('TbTipoCedente', models.DO_NOTHING, db_column='cd_tipo_cedente_sacado')
+    dt_ultima_transacao = models.DateField()
+    fl_status = models.NullBooleanField()
+    dt_validade = models.DateField(blank=True, null=True)
+    fl_exclusivo = models.CharField(max_length=1, blank=True, null=True)
+    nu_ident_insc_munic = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cedente_sacado'
+
+
+class TbCentroCustoCarnet(models.Model):
+    cd_carnet = models.ForeignKey('TmCarnet', models.DO_NOTHING, db_column='cd_carnet', primary_key=True)
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    vl_rateio = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_carnet'
+        unique_together = (('cd_carnet', 'cd_centro_custo'),)
+
+
+class TbCentroCustoNota(models.Model):
+    cd_nota = models.ForeignKey('TmNota', models.DO_NOTHING, db_column='cd_nota', primary_key=True)
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    vl_rateio = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_nota'
+        unique_together = (('cd_nota', 'cd_centro_custo'),)
+
+
+class TbCentroCustoObrigacao(models.Model):
+    cd_obrigacao = models.ForeignKey('TmObrigacao', models.DO_NOTHING, db_column='cd_obrigacao', primary_key=True)
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    vl_rateio = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_obrigacao'
+        unique_together = (('cd_obrigacao', 'cd_centro_custo'),)
+
+
+class TbCentroCustoPedido(models.Model):
+    cd_pedido = models.ForeignKey('TmPedidoFornecedor', models.DO_NOTHING, db_column='cd_pedido', primary_key=True)
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    vl_rateio = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_pedido'
+        unique_together = (('cd_pedido', 'cd_centro_custo'),)
+
+
+class TbCentroCustoTransacao(models.Model):
+    cd_movimento_conta = models.ForeignKey('TmMovimentoTransacao', models.DO_NOTHING, db_column='cd_movimento_conta', primary_key=True)
+    cd_ordem_transacao = models.ForeignKey('TmMovimentoTransacao', models.DO_NOTHING, db_column='cd_ordem_transacao')
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    vl_rateio = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_transacao'
+        unique_together = (('cd_movimento_conta', 'cd_ordem_transacao', 'cd_centro_custo'),)
+
+
+class TbCentroCustoTransferencia(models.Model):
+    cd_transferencia = models.ForeignKey('TmTransferenciaFilial', models.DO_NOTHING, db_column='cd_transferencia', primary_key=True)
+    cd_centro_custo = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_centro_custo')
+    qt_transferencia = models.FloatField(blank=True, null=True)
+    vl_transferencia = models.FloatField()
+    cd_operacao = models.ForeignKey('TbOperacao', models.DO_NOTHING, db_column='cd_operacao', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_centro_custo_transferencia'
+        unique_together = (('cd_transferencia', 'cd_centro_custo'),)
+
+
+class TbCepBairro(models.Model):
+    nm_bairro = models.CharField(max_length=60)
+    nr_bairro = models.CharField(max_length=30, blank=True, null=True)
+    nm_localidade_bairro = models.CharField(max_length=60)
+    cd_tipo_localidade = models.CharField(max_length=1)
+    cd_uf_bairro = models.CharField(primary_key=True, max_length=2)
+    cd_cep_bairro = models.CharField(max_length=8)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cep_bairro'
+        unique_together = (('cd_uf_bairro', 'nm_localidade_bairro', 'cd_tipo_localidade', 'nm_bairro'),)
+
+
+class TbCepLocalidade(models.Model):
+    nm_localidade = models.CharField(max_length=60)
+    cd_cep_localidade = models.CharField(max_length=8)
+    cd_uf_localidade = models.ForeignKey('TbUf', models.DO_NOTHING, db_column='cd_uf_localidade', primary_key=True)
+    cd_tipo_localidade = models.CharField(max_length=1, blank=True, null=True)
+    nr_localidade = models.CharField(max_length=15)
+    nm_municipio = models.CharField(max_length=60, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cep_localidade'
+        unique_together = (('cd_uf_localidade', 'nm_localidade'),)
+
+
+class TbCepLogradouro(models.Model):
+    nm_logradouro = models.CharField(max_length=60)
+    nr_logradouro = models.CharField(max_length=25)
+    nm_localidade_logradouro = models.ForeignKey(TbCepLocalidade, models.DO_NOTHING, db_column='nm_localidade_logradouro')
+    nm_bairro_logradouro_1 = models.CharField(max_length=30, blank=True, null=True)
+    nm_bairro_logradouro_2 = models.CharField(max_length=30, blank=True, null=True)
+    cd_cep_logradouro = models.CharField(max_length=8)
+    cd_uf_logradouro = models.ForeignKey('TbUf', models.DO_NOTHING, db_column='cd_uf_logradouro')
+    cd_tipo_logradouro = models.ForeignKey('TbTipoLogradouro', models.DO_NOTHING, db_column='cd_tipo_logradouro')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cep_logradouro'
+
+
+class TbCertificacaoUnidade(models.Model):
+    cd_unidade_atendimento = models.CharField(max_length=3)
+    dt_operacao = models.DateField()
+    nm_operador = models.CharField(max_length=10)
+    dt_inicio_certifica = models.DateField(blank=True, null=True)
+    dt_ultimo_processamento = models.DateField(blank=True, null=True)
+    nu_dias = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_certificacao_unidade'
+
+
+class TbCheckCidInternacao(models.Model):
+    nome = models.CharField(max_length=256, blank=True, null=True)
+    idade = models.FloatField(blank=True, null=True)
+    dt_entrada = models.DateField(blank=True, null=True)
+    hr_entrada = models.IntegerField(blank=True, null=True)
+    dt_solicitacao = models.DateField(blank=True, null=True)
+    hr_solicitacao = models.IntegerField(blank=True, null=True)
+    diagnostico = models.CharField(max_length=256, blank=True, null=True)
+    cd_atendimento = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_check_cid_internacao'
+
+
+class TbChefiaComite(models.Model):
+    cd_comite = models.ForeignKey('TbProfissionalComite', models.DO_NOTHING, db_column='cd_comite', primary_key=True)
+    cd_profissional = models.ForeignKey('TbProfissionalComite', models.DO_NOTHING, db_column='cd_profissional')
+    dt_assume_chefia = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_chefia_comite'
+        unique_together = (('cd_comite', 'cd_profissional'),)
+
+
+class TbChefiaPlantaoMedico(models.Model):
+    cd_operador_medico = models.CharField(primary_key=True, max_length=10)
+    cd_filial = models.ForeignKey('TbFilial', models.DO_NOTHING, db_column='cd_filial')
+    cd_operador_cadastrou = models.CharField(max_length=10, blank=True, null=True)
+    dt_transacao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_chefia_plantao_medico'
+        unique_together = (('cd_operador_medico', 'cd_filial'),)
+
+
+class TbChefiaPlantaoMedicoEspec(models.Model):
+    cd_operador_medico = models.ForeignKey(TbChefiaPlantaoMedico, models.DO_NOTHING, db_column='cd_operador_medico', primary_key=True)
+    cd_filial = models.ForeignKey(TbChefiaPlantaoMedico, models.DO_NOTHING, db_column='cd_filial')
+    cd_local_atendimento = models.ForeignKey('TbGrupoAtendimentoSa', models.DO_NOTHING, db_column='cd_local_atendimento')
+    cd_grupo_atendimento = models.ForeignKey('TbGrupoAtendimentoSa', models.DO_NOTHING, db_column='cd_grupo_atendimento')
+    cd_operador_cadastrou = models.CharField(max_length=10, blank=True, null=True)
+    dt_transacao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_chefia_plantao_medico_espec'
+        unique_together = (('cd_operador_medico', 'cd_filial', 'cd_local_atendimento', 'cd_grupo_atendimento'),)
+
+
+class TbChequeCaucao(models.Model):
+    cd_atendimento = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_ordem = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_caucao = models.IntegerField()
+    cd_convenio_pagador = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_convenio_pagador', blank=True, null=True)
+    dt_paga_caucao = models.DateField(blank=True, null=True)
+    cd_caucao = models.IntegerField(blank=True, null=True)
+    cd_cobranca = models.ForeignKey('TbCobrancaPaciente', models.DO_NOTHING, db_column='cd_cobranca', blank=True, null=True)
+    fl_cheque = models.CharField(max_length=1, blank=True, null=True)
+    cd_banco = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_banco', blank=True, null=True)
+    cd_agencia = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_agencia', blank=True, null=True)
+    nu_cheque = models.CharField(max_length=10, blank=True, null=True)
+    vl_caucao = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=200, blank=True, null=True)
+    cd_usuario = models.CharField(max_length=30, blank=True, null=True)
+    dt_recibo = models.DateField(blank=True, null=True)
+    nu_parcelas = models.FloatField(blank=True, null=True)
+    cd_bandeira_cartao = models.FloatField(blank=True, null=True)
+    cd_forma_pagamento = models.ForeignKey('TbFormaPagamento', models.DO_NOTHING, db_column='cd_forma_pagamento', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cheque_caucao'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia', 'cd_ordem', 'cd_ordem_caucao'),)
+
+
+class TbChequeRecebido(models.Model):
+    cd_cheque_recebido = models.FloatField(primary_key=True)
+    cd_banco = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_banco')
+    cd_agencia = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_agencia')
+    nu_cheque = models.CharField(max_length=10)
+    cd_cedente_sacado = models.ForeignKey(TbCedenteSacado, models.DO_NOTHING, db_column='cd_cedente_sacado', blank=True, null=True)
+    dt_cheque = models.DateField()
+    dt_liberacao_deposito = models.DateField(blank=True, null=True)
+    cd_obrigacao = models.ForeignKey('TmObrigacao', models.DO_NOTHING, db_column='cd_obrigacao', blank=True, null=True)
+    fl_status = models.CharField(max_length=1)
+    ds_observacao = models.CharField(max_length=2000, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cheque_recebido'
+
+
+class TbCid(models.Model):
+    cd_grupo_cid = models.ForeignKey('TbGrupoCid', models.DO_NOTHING, db_column='cd_grupo_cid', primary_key=True)
+    cd_cid = models.FloatField(unique=True)
+    nm_cid = models.CharField(max_length=240)
+    nr_cid = models.CharField(max_length=50, blank=True, null=True)
+    qt_dias = models.IntegerField(blank=True, null=True)
+    dt_ini_vigencia = models.DateField(blank=True, null=True)
+    dt_fin_vigencia = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cid'
+        unique_together = (('cd_grupo_cid', 'cd_cid'),)
+
+
+class TbCid10(models.Model):
+    cid10 = models.CharField(primary_key=True, max_length=4)
+    opc = models.CharField(max_length=1, blank=True, null=True)
+    cat = models.CharField(max_length=1, blank=True, null=True)
+    subcat = models.CharField(max_length=1, blank=True, null=True)
+    descr = models.CharField(max_length=50, blank=True, null=True)
+    restrsexo = models.CharField(max_length=1, blank=True, null=True)
+    cd_grupo_cid10 = models.ForeignKey(TbCategoriaCid10, models.DO_NOTHING, db_column='cd_grupo_cid10', blank=True, null=True)
+    cd_subgrupo_cid10 = models.ForeignKey(TbCategoriaCid10, models.DO_NOTHING, db_column='cd_subgrupo_cid10', blank=True, null=True)
+    cd_categoria_cid10 = models.ForeignKey(TbCategoriaCid10, models.DO_NOTHING, db_column='cd_categoria_cid10', blank=True, null=True)
+    nm_cid10 = models.CharField(max_length=400, blank=True, null=True)
+    fl_uso = models.CharField(max_length=1, blank=True, null=True)
+    obs = models.CharField(max_length=4000, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cid10'
+
+
+class TbCid10Aux(models.Model):
+    id_cid = models.CharField(primary_key=True, max_length=100)
+    descricao = models.CharField(max_length=1000, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cid10_aux'
+
+
+class TbCid10Axu(models.Model):
+    id_cid_10 = models.CharField(primary_key=True, max_length=10)
+    descricao = models.CharField(max_length=400, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cid10_axu'
+
+
+class TbCidProcedimento(models.Model):
+    cid10 = models.ForeignKey(TbCid10, models.DO_NOTHING, db_column='cid10', primary_key=True)
+    cd_procedimento = models.ForeignKey('TbProcedimento', models.DO_NOTHING, db_column='cd_procedimento')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cid_procedimento'
+        unique_together = (('cid10', 'cd_procedimento'),)
+
+
+class TbCirurgiaMaterial(models.Model):
+    cd_ato_cirurgico = models.FloatField(primary_key=True)
+    nm_ato_cirurgico = models.CharField(max_length=128, blank=True, null=True)
+    dt_ini_vigencia = models.DateField(blank=True, null=True)
+    dt_fin_vigencia = models.DateField(blank=True, null=True)
+    user_ini = models.CharField(max_length=10, blank=True, null=True)
+    user_fin = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cirurgia_material'
+
+
+class TbClasseAcomodacao(models.Model):
+    cd_classe_acomodacao = models.IntegerField(primary_key=True)
+    nm_classe_acomodacao = models.CharField(max_length=20)
+    cd_tipo_classe_acomodacao = models.ForeignKey('TbTipoClasseAcomodacao', models.DO_NOTHING, db_column='cd_tipo_classe_acomodacao', blank=True, null=True)
+    cd_tipo_acomodacao = models.ForeignKey('TbTipoAcomodacaoAns', models.DO_NOTHING, db_column='cd_tipo_acomodacao', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_acomodacao'
+
+
+class TbClasseAcomodacaoConvenio(models.Model):
+    cd_convenio = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio', primary_key=True)
+    cd_plano_convenio = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano_convenio')
+    cd_classe_acomodacao = models.ForeignKey(TbClasseAcomodacao, models.DO_NOTHING, db_column='cd_classe_acomodacao')
+    fl_pagamento = models.CharField(max_length=1)
+    dt_ini_vigencia = models.DateField(blank=True, null=True)
+    dt_fin_vigencia = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_acomodacao_convenio'
+        unique_together = (('cd_convenio', 'cd_plano_convenio', 'cd_classe_acomodacao'),)
+
+
+class TbClasseMedico(models.Model):
+    cd_classe_medico = models.IntegerField(primary_key=True)
+    nm_classe_medico = models.CharField(max_length=45, blank=True, null=True)
+    nu_tempo_correcao = models.FloatField(blank=True, null=True)
+    fl_pre_laudo = models.CharField(max_length=1, blank=True, null=True)
+    fl_laudo_pendente = models.CharField(max_length=1, blank=True, null=True)
+    fl_laudo_definitivo = models.CharField(max_length=1, blank=True, null=True)
+    nu_qtde_crct_laudo = models.FloatField(blank=True, null=True)
+    fl_fura_fila = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_medico'
+
+
+class TbClasseRemessaAtendimento(models.Model):
+    cd_classe_atendimento = models.FloatField(primary_key=True)
+    ds_classe_atendimento = models.CharField(max_length=64)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_remessa_atendimento'
+
+
+class TbClasseReposicao(models.Model):
+    cd_classe_reposicao = models.IntegerField(primary_key=True)
+    dsc_classe_reposicao = models.CharField(max_length=45)
+    rep_automatica = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_reposicao'
+
+
+class TbClasseTipoClassificacao(models.Model):
+    fl_tipo_classificacao = models.BooleanField(primary_key=True)
+    ds_fl_tipo_classificacao = models.CharField(max_length=45, blank=True, null=True)
+    cd_tipo_produto_servico = models.CharField(max_length=5)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_tipo_classificacao'
+
+
+class TbClasseTipoOperacao(models.Model):
+    cd_classe_tipo_operacao = models.IntegerField(primary_key=True)
+    nm_classe_tipo_operacao = models.CharField(max_length=45)
+    fl_natureza = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_tipo_operacao'
+
+
+class TbClasseTipoOperacao(models.Model):
+    cd_classe_tipo_operacao = models.IntegerField(primary_key=True)
+    nm_classe_tipo_operacao = models.CharField(max_length=45)
+    fl_natureza = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classe_tipo_operacao_'
+
+
+class TbClassiPrioridadeExame(models.Model):
+    cd_prioridade = models.FloatField(primary_key=True)
+    ds_prioridade = models.CharField(max_length=300)
+    tempo_processo = models.FloatField(blank=True, null=True)
+    cd_color = models.CharField(max_length=50, blank=True, null=True)
+    cd_risco_associado_emg = models.CharField(unique=True, max_length=50, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classi_prioridade_exame'
+
+
+class TbClassificacao(models.Model):
+    cd_classificacao = models.IntegerField(primary_key=True)
+    nm_classificacao = models.CharField(unique=True, max_length=45)
+    cd_tipo_classificacao = models.ForeignKey('TbTipoClassificacao', models.DO_NOTHING, db_column='cd_tipo_classificacao')
+    fl_3_comanda = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classificacao'
+
+
+class TbClassificacaoOncologia(models.Model):
+    cd_classificacao_oncologia = models.IntegerField(primary_key=True)
+    nm_classificacao = models.CharField(max_length=45, blank=True, null=True)
+    fl_ativo = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_classificacao_oncologia'
+
+
+class TbClinica(models.Model):
+    cd_clinica = models.IntegerField(primary_key=True)
+    nm_clinica = models.CharField(max_length=20)
+    cd_especial = models.ForeignKey('TbEspecialSus', models.DO_NOTHING, db_column='cd_especial', blank=True, null=True)
+    qt_leitos = models.IntegerField(blank=True, null=True)
+    fl_espec_emergencia = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_clinica'
+
+
+class TbClinicaMovimento(models.Model):
+    cd_convenio = models.ForeignKey('TbConvenioClinica', models.DO_NOTHING, db_column='cd_convenio', primary_key=True)
+    cd_clinica = models.ForeignKey('TbConvenioClinica', models.DO_NOTHING, db_column='cd_clinica')
+    dt_movimento = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_clinica_movimento'
+        unique_together = (('cd_convenio', 'cd_clinica', 'dt_movimento'),)
+
+
+class TbCns(models.Model):
+    seq_unico = models.FloatField(primary_key=True)
+    nu_cns = models.CharField(max_length=15, blank=True, null=True)
+    nu_cpf = models.CharField(max_length=11, blank=True, null=True)
+    nm_nome = models.CharField(max_length=100, blank=True, null=True)
+    nm_nome_social = models.CharField(max_length=100, blank=True, null=True)
+    nm_nome_mae = models.CharField(max_length=100, blank=True, null=True)
+    nm_nome_pai = models.CharField(max_length=100, blank=True, null=True)
+    fl_sexo = models.CharField(max_length=1, blank=True, null=True)
+    cd_cor = models.ForeignKey('TbCor', models.DO_NOTHING, db_column='cd_cor', blank=True, null=True)
+    cd_etnia = models.ForeignKey('TbEtniaIndigena', models.DO_NOTHING, db_column='cd_etnia', blank=True, null=True)
+    dt_nascimento = models.DateField(blank=True, null=True)
+    fl_tipo_sanguineo = models.CharField(max_length=3, blank=True, null=True)
+    dt_obito = models.DateField(blank=True, null=True)
+    nr_nacionalidade = models.CharField(max_length=20, blank=True, null=True)
+    nm_naturalidade = models.CharField(max_length=45, blank=True, null=True)
+    nm_naturalidade_uf = models.ForeignKey('TbUf', models.DO_NOTHING, db_column='nm_naturalidade_uf', blank=True, null=True)
+    nm_pais_nascimento = models.CharField(max_length=45, blank=True, null=True)
+    dt_naturalizacao = models.DateField(blank=True, null=True)
+    nm_port_naturalizacao = models.CharField(max_length=45, blank=True, null=True)
+    dt_entrada = models.DateField(blank=True, null=True)
+    nm_email_principal = models.CharField(max_length=100, blank=True, null=True)
+    nm_email_principal_conf = models.CharField(max_length=100, blank=True, null=True)
+    nm_email_alternativo = models.CharField(max_length=100, blank=True, null=True)
+    nm_email_alternativo_conf = models.CharField(max_length=100, blank=True, null=True)
+    fl_tipo_fone = models.CharField(max_length=45, blank=True, null=True)
+    nu_ddd_fone = models.CharField(max_length=2, blank=True, null=True)
+    nu_fone = models.CharField(max_length=10, blank=True, null=True)
+    fl_nomade = models.CharField(max_length=1, blank=True, null=True)
+    nm_residencia_pais = models.CharField(max_length=45, blank=True, null=True)
+    nu_residencia_cep = models.CharField(max_length=10, blank=True, null=True)
+    nm_residencia_munic = models.CharField(max_length=45, blank=True, null=True)
+    nm_residencia_uf = models.ForeignKey('TbUf', models.DO_NOTHING, db_column='nm_residencia_uf', blank=True, null=True)
+    nm_residencia_logradouro = models.CharField(max_length=45, blank=True, null=True)
+    nm_residencia_bairro = models.CharField(max_length=45, blank=True, null=True)
+    nu_residencia_numero = models.CharField(max_length=45, blank=True, null=True)
+    nm_residencia_complemento = models.CharField(max_length=45, blank=True, null=True)
+    nu_dnv = models.IntegerField(blank=True, null=True)
+    nu_pis = models.CharField(max_length=45, blank=True, null=True)
+    nu_rg = models.BigIntegerField(blank=True, null=True)
+    nm_orgao_rg = models.CharField(max_length=45, blank=True, null=True)
+    nm_uf_orgao_rg = models.CharField(max_length=2, blank=True, null=True)
+    dt_emissao_rg = models.DateField(blank=True, null=True)
+    nu_titulo = models.BigIntegerField(blank=True, null=True)
+    nu_titulo_zona = models.IntegerField(blank=True, null=True)
+    nu_titulo_secao = models.IntegerField(blank=True, null=True)
+    nu_ctps = models.BigIntegerField(blank=True, null=True)
+    nu_ctps_serie = models.IntegerField(blank=True, null=True)
+    dt_ctps_emissao = models.DateField(blank=True, null=True)
+    nu_cnh = models.BigIntegerField(blank=True, null=True)
+    nm_cnh_uf = models.ForeignKey('TbUf', models.DO_NOTHING, db_column='nm_cnh_uf', blank=True, null=True)
+    dt_cnh_emissao = models.DateField(blank=True, null=True)
+    nu_passaporte = models.CharField(max_length=15, blank=True, null=True)
+    nu_passaporte_pais = models.CharField(max_length=15, blank=True, null=True)
+    dt_passaporte_validade = models.DateField(blank=True, null=True)
+    dt_passaporte_emissao = models.DateField(blank=True, null=True)
+    fl_certidao_modelo = models.CharField(max_length=1, blank=True, null=True)
+    nm_certidao_cartorio = models.CharField(max_length=15, blank=True, null=True)
+    nm_certidao_livro = models.CharField(max_length=15, blank=True, null=True)
+    nm_certidao_folha = models.CharField(max_length=15, blank=True, null=True)
+    nm_certidao_termo = models.CharField(max_length=15, blank=True, null=True)
+    dt_certidao_emissao = models.DateField(blank=True, null=True)
+    nu_certidao_cod01 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod02 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod03 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod04 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod05 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod06 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod07 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod08 = models.FloatField(blank=True, null=True)
+    nu_certidao_cod09 = models.FloatField(blank=True, null=True)
+    cd_paciente = models.FloatField(blank=True, null=True)
+    cd_pessoa = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cns'
+
+
+class TbCobrancaPaciente(models.Model):
+    cd_cobranca = models.CharField(primary_key=True, max_length=15)
+    nu_guia = models.CharField(max_length=15, blank=True, null=True)
+    cd_atendimento = models.ForeignKey('TmAtendimento', models.DO_NOTHING, db_column='cd_atendimento', blank=True, null=True)
+    cd_convenio = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_convenio', blank=True, null=True)
+    cd_plano_convenio = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_plano_convenio', blank=True, null=True)
+    dt_cobranca = models.DateField(blank=True, null=True)
+    dt_competencia = models.DateField(blank=True, null=True)
+    dt_inicio = models.DateField(blank=True, null=True)
+    dt_final = models.DateField(blank=True, null=True)
+    cd_um = models.ForeignKey('TbUm', models.DO_NOTHING, db_column='cd_um', blank=True, null=True)
+    vl_cobranca = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    pc_taxa_servico = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    vl_taxa_servico = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    vl_saldo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=260, blank=True, null=True)
+    vl_diaria = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    nu_capa_processo = models.FloatField(blank=True, null=True)
+    cd_pessoa = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_pessoa', blank=True, null=True)
+    nu_remessa = models.FloatField(blank=True, null=True)
+    cd_sequencia = models.FloatField(blank=True, null=True)
+    vl_pacote = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    cd_cobranca_ordem = models.FloatField(blank=True, null=True)
+    cd_cobranca_pai = models.ForeignKey('self', models.DO_NOTHING, db_column='cd_cobranca_pai', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cobranca_paciente'
+        unique_together = (('cd_atendimento', 'cd_convenio', 'nu_guia', 'cd_pessoa', 'cd_cobranca_ordem'),)
+
+
+class TbCobrancaPacienteAudit(models.Model):
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', primary_key=True)
+    dt_auditoria_fin = models.DateField(blank=True, null=True)
+    cd_usuario_fin = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_usuario_fin', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cobranca_paciente_audit'
+
+
+class TbCobrancaPacienteParcial(models.Model):
+    cd_cobranca_paciente_parcial = models.FloatField(primary_key=True)
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', unique=True)
+    fl_status = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cobranca_paciente_parcial'
+
+
+class TbCodBarraDevolucao(models.Model):
+    cd_devolucao = models.IntegerField(blank=True, null=True)
+    cd_cod_barra = models.CharField(max_length=100, blank=True, null=True)
+    cd_atendimento = models.IntegerField(blank=True, null=True)
+    cd_requisicao = models.IntegerField(blank=True, null=True)
+    cd_material = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_cod_barra_devolucao'
+        unique_together = (('cd_devolucao', 'cd_cod_barra'),)
+
+
+class TbCodbarraCxReservaPosto(models.Model):
+    cd_codigo_barra = models.CharField(primary_key=True, max_length=100)
+    cd_setor = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor')
+    seq = models.FloatField()
+    cd_material = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_codbarra_cx_reserva_posto'
+        unique_together = (('cd_codigo_barra', 'seq'),)
+
+
+class TbCodigoBarra(models.Model):
+    cd_codigo_barra = models.CharField(primary_key=True, max_length=100)
+    id_lote_validade = models.CharField(max_length=12, blank=True, null=True)
+    fl_status = models.NullBooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_codigo_barra'
+
+
+class TbCodigoBarraHist(models.Model):
+    cd_codigo_barra = models.CharField(primary_key=True, max_length=100)
+    id_lote_validade = models.CharField(max_length=12)
+    dt_validade = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_codigo_barra_hist'
+        unique_together = (('cd_codigo_barra', 'id_lote_validade'),)
+
+
+class TbCodigoBarraImpresso(models.Model):
+    cd_codigo_barra = models.CharField(max_length=100)
+    cd_material = models.FloatField(blank=True, null=True)
+    cd_lote = models.CharField(max_length=30, blank=True, null=True)
+    id_lote_validade = models.CharField(max_length=12, blank=True, null=True)
+    fl_impresso = models.CharField(max_length=1, blank=True, null=True)
+    cd_impresso = models.FloatField(primary_key=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_codigo_barra_impresso'
+        unique_together = (('cd_impresso', 'cd_codigo_barra'),)
+
+
+class TbCodigoRetornoBioface(models.Model):
+    cd_retorno = models.FloatField(primary_key=True)
+    tipo_retorno = models.CharField(max_length=1)
+    ds_retorno = models.CharField(max_length=1000)
+    ds_motivo = models.CharField(max_length=2000)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_codigo_retorno_bioface'
+
+
+class TbComanda(models.Model):
+    nu_comanda = models.CharField(unique=True, max_length=8)
+    cd_ocorrencia = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_ordem = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_cmd = models.IntegerField()
+    cd_atendimento = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    dt_comanda = models.DateField()
+    cd_setor_origem = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor_origem', blank=True, null=True)
+    cd_setor_destino = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor_destino', blank=True, null=True)
+    fl_requisicao_devolucao = models.NullBooleanField()
+    ds_observacao = models.CharField(max_length=2000, blank=True, null=True)
+    cd_ocorrencia_pacote = models.IntegerField(blank=True, null=True)
+    cd_profissional = models.ForeignKey('TbProfissional', models.DO_NOTHING, db_column='cd_profissional', blank=True, null=True)
+    fl_carro_parada = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comanda'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia', 'cd_ordem', 'cd_ordem_cmd'),)
+
+
+class TbComandaMatMed(models.Model):
+    cd_atendimento = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_ordem = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_cmd = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ordem_cmd')
+    cd_ordem_m = models.IntegerField()
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', blank=True, null=True)
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med')
+    cd_convenio_pagador = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_convenio_pagador')
+    hr_comanda = models.IntegerField(blank=True, null=True)
+    qt_material = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    vl_material = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    qt_entregue = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    vl_total = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    qt_devolvido = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    fl_sinal = models.CharField(max_length=1, blank=True, null=True)
+    qt_material_paga = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    vl_total_pago = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=120, blank=True, null=True)
+    fl_status_pago = models.CharField(max_length=3, blank=True, null=True)
+    qt_entregue_real = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    cd_natureza_glosa = models.ForeignKey('TbNaturezaGlosa', models.DO_NOTHING, db_column='cd_natureza_glosa', blank=True, null=True)
+    cd_fornecedor = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_fornecedor', blank=True, null=True)
+    nu_nota_fornecedor = models.BigIntegerField(blank=True, null=True)
+    qt_requisicao = models.FloatField(blank=True, null=True)
+    cd_item_hapvida = models.CharField(max_length=12, blank=True, null=True)
+    vl_item_hap = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    fl_tipo_classificacao = models.NullBooleanField()
+    cd_ocorrencia_pacote = models.FloatField(blank=True, null=True)
+    fl_faturamento_restrito = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comanda_mat_med'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia', 'cd_ordem', 'cd_ordem_cmd', 'cd_ordem_m'),)
+
+
+class TbComandaPabx(models.Model):
+    cd_atendimento = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_ordem = models.ForeignKey('TbProcedimentoRealizado', models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_pabx = models.IntegerField()
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', blank=True, null=True)
+    hr_ligacao = models.IntegerField(blank=True, null=True)
+    nu_duracao = models.IntegerField(blank=True, null=True)
+    vl_custo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    cd_ramal = models.ForeignKey('TbRamal', models.DO_NOTHING, db_column='cd_ramal')
+    nu_discado = models.CharField(max_length=20, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=30, blank=True, null=True)
+    dt_ligacao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comanda_pabx'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia', 'cd_ordem', 'cd_ordem_pabx'),)
+
+
+class TbComandaParametros(models.Model):
+    nu_comanda = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='nu_comanda')
+    dt_comanda = models.DateField()
+    cd_setor_origem = models.CharField(max_length=6, blank=True, null=True)
+    dt_reposta = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comanda_parametros'
+
+
+class TbComandaTaxa(models.Model):
+    cd_atendimento = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_ordem = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_cmd = models.ForeignKey(TbComanda, models.DO_NOTHING, db_column='cd_ordem_cmd')
+    cd_ordem_tx = models.IntegerField()
+    cd_taxas = models.ForeignKey('TbTaxas', models.DO_NOTHING, db_column='cd_taxas')
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', blank=True, null=True)
+    cd_convenio_pagador = models.ForeignKey('TbConvenioPagador', models.DO_NOTHING, db_column='cd_convenio_pagador')
+    hr_comanda = models.IntegerField(blank=True, null=True)
+    qt_taxa = models.IntegerField(blank=True, null=True)
+    vl_taxa = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    vl_total = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    fl_sinal = models.CharField(max_length=1, blank=True, null=True)
+    qt_taxa_paga = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    vl_total_pago = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=120, blank=True, null=True)
+    fl_status_pago = models.CharField(max_length=3, blank=True, null=True)
+    cd_natureza_glosa = models.ForeignKey('TbNaturezaGlosa', models.DO_NOTHING, db_column='cd_natureza_glosa', blank=True, null=True)
+    cd_item_hapvida = models.CharField(max_length=12, blank=True, null=True)
+    vl_item_hap = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    cd_ocorrencia_pacote = models.FloatField(blank=True, null=True)
+    fl_faturamento_restrito = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comanda_taxa'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia', 'cd_ordem', 'cd_ordem_cmd', 'cd_ordem_tx'),)
+
+
+class TbComandoObrigacao(models.Model):
+    cd_comando_obrigacao = models.FloatField(primary_key=True)
+    nm_comando_obrigacao = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comando_obrigacao'
+
+
+class TbComandoXml(models.Model):
+    nu_protocolo = models.BigIntegerField()
+    obj_version = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comando_xml'
+
+
+class TbComissaoGarcon(models.Model):
+    cd_garcon = models.IntegerField(primary_key=True)
+    dt_ano_mes = models.CharField(max_length=6)
+    vl_comissao = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comissao_garcon'
+        unique_together = (('cd_garcon', 'dt_ano_mes'),)
+
+
+class TbComite(models.Model):
+    cd_comite = models.IntegerField(primary_key=True)
+    nm_comite = models.CharField(max_length=45)
+    dt_fundacao = models.DateField()
+    dt_expiracao = models.DateField(blank=True, null=True)
+    ds_periodic_reuniao = models.CharField(max_length=10, blank=True, null=True)
+    dt_proxima_reuniao = models.DateField(blank=True, null=True)
+    fl_tipo_comite = models.NullBooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comite'
+
+
+class TbComparacaoExececaoParam(models.Model):
+    cd_procedimento = models.CharField(max_length=8)
+    cd_parametro_referencia = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comparacao_exececao_param'
+
+
+class TbComparativoExececaoProced(models.Model):
+    cd_procedimento = models.CharField(max_length=8)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comparativo_exececao_proced'
+
+
+class TbComparativoOrdemProced(models.Model):
+    cd_procedimento = models.CharField(max_length=8)
+    nu_ordem = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comparativo_ordem_proced'
+
+
+class TbComparativoProcedEspecial(models.Model):
+    cd_procedimento = models.CharField(max_length=8)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_comparativo_proced_especial'
+
+
+class TbCompatibilidadeSus(models.Model):
+    cd_procedimento = models.ForeignKey('TbProcedimento', models.DO_NOTHING, db_column='cd_procedimento', primary_key=True)
+    cd_procedimento_sus = models.ForeignKey('TbProcedimentoSus', models.DO_NOTHING, db_column='cd_procedimento_sus')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_compatibilidade_sus'
+        unique_together = (('cd_procedimento', 'cd_procedimento_sus'),)
+
+
+class TbCompoeCardapio(models.Model):
+    cd_cardapio = models.ForeignKey(TbCardapio, models.DO_NOTHING, db_column='cd_cardapio', primary_key=True)
+    cd_ocorrencia = models.IntegerField()
+    cd_mat_med = models.IntegerField()
+    cd_unidade = models.CharField(max_length=2)
+    qt_conteudo = models.FloatField()
+    qt_dieta = models.IntegerField(blank=True, null=True)
+    cd_classificacao = models.IntegerField(blank=True, null=True)
+    cd_unidade_dieta = models.CharField(max_length=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_compoe_cardapio'
+        unique_together = (('cd_cardapio', 'cd_ocorrencia'),)
+
+
+class TbComponenteAvaliacao(models.Model):
+    cd_componente_avaliacao = models.IntegerField(primary_key=True)
+    nm_componente_avaliacao = models.CharField(max_length=160)
+    classif1 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_componente_avaliacao'
+
+
+class TbComponenteNanda(models.Model):
+    cd_nanda = models.ForeignKey('self', models.DO_NOTHING, db_column='cd_nanda', primary_key=True)
+    cd_ordem = models.IntegerField()
+    cd_ordem_pai = models.ForeignKey('self', models.DO_NOTHING, db_column='cd_ordem_pai', blank=True, null=True)
+    cd_componente_avaliacao = models.ForeignKey(TbComponenteAvaliacao, models.DO_NOTHING, db_column='cd_componente_avaliacao')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_componente_nanda'
+        unique_together = (('cd_nanda', 'cd_ordem'),)
+
+
+class TbComposicaoDieta(models.Model):
+    cd_dieta = models.ForeignKey('TbDieta', models.DO_NOTHING, db_column='cd_dieta', primary_key=True)
+    cd_ordem_dieta = models.IntegerField()
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med')
+    cd_unidade = models.CharField(max_length=2, blank=True, null=True)
+    qt_conteudo = models.IntegerField(blank=True, null=True)
+    nm_composicao_dieta = models.CharField(max_length=120, blank=True, null=True)
+    fl_gera_consumo = models.CharField(max_length=1, blank=True, null=True)
+    fl_consumo_lata = models.CharField(max_length=1, blank=True, null=True)
+    fl_parenteral_manipulada = models.CharField(max_length=1, blank=True, null=True)
+    fl_parenteral = models.CharField(max_length=1, blank=True, null=True)
+    fl_enteral = models.CharField(max_length=1, blank=True, null=True)
+    cd_procedimento_nutricao = models.ForeignKey('TbProcedimento', models.DO_NOTHING, db_column='cd_procedimento_nutricao', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_composicao_dieta'
+        unique_together = (('cd_dieta', 'cd_ordem_dieta'),)
+
+
+class TbComposicaoDietaAgd(models.Model):
+    cd_agenda = models.BigIntegerField(primary_key=True)
+    cd_modelo = models.BigIntegerField()
+    cd_dieta = models.IntegerField()
+    cd_ordem_dieta = models.IntegerField()
+    cd_ordem = models.IntegerField()
+    nm_composicao_dieta = models.CharField(max_length=120, blank=True, null=True)
+    cd_mat_med = models.FloatField(blank=True, null=True)
+    qt_composicao = models.IntegerField(blank=True, null=True)
+    cd_unidade_usual = models.CharField(max_length=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_composicao_dieta_agd'
+        unique_together = (('cd_agenda', 'cd_modelo', 'cd_dieta', 'cd_ordem_dieta', 'cd_ordem'),)
+
+
+class TbComposicaoDietaPacModelo(models.Model):
+    cd_modelo = models.BigIntegerField(primary_key=True)
+    cd_ordem_dieta = models.IntegerField()
+    cd_ordem = models.IntegerField()
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med', blank=True, null=True)
+    qt_composicao = models.IntegerField(blank=True, null=True)
+    cd_unidade_usual = models.ForeignKey('TbUnidadeUsual', models.DO_NOTHING, db_column='cd_unidade_usual', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_composicao_dieta_pac_modelo'
+        unique_together = (('cd_modelo', 'cd_ordem_dieta', 'cd_ordem'),)
+
+
+class TbComposicaoDietaPaciente(models.Model):
+    cd_atendimento = models.ForeignKey('TbDietaPaciente', models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia_plano = models.ForeignKey('TbDietaPaciente', models.DO_NOTHING, db_column='cd_ocorrencia_plano')
+    cd_ordem_prescricao = models.ForeignKey('TbDietaPaciente', models.DO_NOTHING, db_column='cd_ordem_prescricao')
+    cd_ordem_dieta = models.ForeignKey('TbDietaPaciente', models.DO_NOTHING, db_column='cd_ordem_dieta')
+    cd_ordem = models.IntegerField()
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med', blank=True, null=True)
+    qt_composicao = models.IntegerField(blank=True, null=True)
+    cd_unidade_usual = models.ForeignKey('TbUnidadeUsual', models.DO_NOTHING, db_column='cd_unidade_usual', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_composicao_dieta_paciente'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia_plano', 'cd_ordem_prescricao', 'cd_ordem_dieta', 'cd_ordem'),)
+
+
+class TbComposicaoDietaPrescrita(models.Model):
+    cd_atendimento = models.ForeignKey(TbAprazamentoDieta, models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_ocorrencia_plano = models.ForeignKey(TbAprazamentoDieta, models.DO_NOTHING, db_column='cd_ocorrencia_plano')
+    cd_ordem_prescricao = models.ForeignKey(TbAprazamentoDieta, models.DO_NOTHING, db_column='cd_ordem_prescricao')
+    cd_ordem_dieta = models.ForeignKey(TbAprazamentoDieta, models.DO_NOTHING, db_column='cd_ordem_dieta')
+    cd_ordem = models.ForeignKey(TbAprazamentoDieta, models.DO_NOTHING, db_column='cd_ordem')
+    cd_ordem_composicao = models.IntegerField()
+    cd_cardapio = models.ForeignKey(TbCompoeCardapio, models.DO_NOTHING, db_column='cd_cardapio')
+    cd_ocorrencia = models.ForeignKey(TbCompoeCardapio, models.DO_NOTHING, db_column='cd_ocorrencia')
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med')
+    cd_unidade = models.CharField(max_length=2, blank=True, null=True)
+    fl_porcao = models.CharField(max_length=5, blank=True, null=True)
+    qt_conteudo = models.IntegerField(blank=True, null=True)
+    ds_composicao_dieta = models.CharField(max_length=200, blank=True, null=True)
+    cd_operador = models.CharField(max_length=30, blank=True, null=True)
+    cd_terminal = models.CharField(max_length=30, blank=True, null=True)
+    dt_transacao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_composicao_dieta_prescrita'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia_plano', 'cd_ordem_prescricao', 'cd_ordem_dieta', 'cd_ordem', 'cd_ordem_composicao'),)
+
+
+class TbComprOncoHist(models.Model):
+    cd_nota = models.FloatField(primary_key=True)
+    cd_ordem = models.FloatField()
+    id_ordem_compra = models.FloatField(blank=True, null=True)
+    id_pedido_compra = models.FloatField(blank=True, null=True)
+    dt_nota = models.DateField(blank=True, null=True)
+    cd_mat_med = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_mat_med', blank=True, null=True)
+    nm_mat_med = models.CharField(max_length=55, blank=True, null=True)
+    qtd_mat_med = models.FloatField(blank=True, null=True)
+    cd_unidade_atendimento = models.ForeignKey('TbFilial', models.DO_NOTHING, db_column='cd_unidade_atendimento', blank=True, null=True)
+    nm_unidade_atendimento = models.CharField(max_length=45, blank=True, null=True)
+    cd_brasindice = models.FloatField(blank=True, null=True)
+    cd_complemento_brasindice = models.CharField(max_length=4, blank=True, null=True)
+    ds_produto = models.CharField(max_length=100, blank=True, null=True)
+    ds_embalagem = models.CharField(max_length=60, blank=True, null=True)
+    prc_mat_med = models.FloatField(blank=True, null=True)
+    qtd_mat_med_unit = models.FloatField(blank=True, null=True)
+    prc_mat_med_unit = models.FloatField(blank=True, null=True)
+    cd_setor = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_compr_onco_hist'
+        unique_together = (('cd_nota', 'cd_ordem'),)
+
+
+class TbCondicao(models.Model):
+    cd_condicao = models.IntegerField(primary_key=True)
+    nm_condicao = models.CharField(max_length=20)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_condicao'
+
+
+class TbCondicoesNniss(models.Model):
+    cd_condicao = models.FloatField(primary_key=True)
+    cd_condicao_primaria = models.FloatField()
+    ds_condicao_primaria = models.CharField(max_length=45)
+    condicao_secundaria = models.FloatField(blank=True, null=True)
+    ds_condicao = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_condicoes_nniss'
+
+
+class TbCondicoesSitiosNniss(models.Model):
+    cd_condicao_sitio = models.FloatField(primary_key=True)
+    cd_ordem_condicao = models.FloatField()
+    cd_condicao = models.ForeignKey(TbCondicoesNniss, models.DO_NOTHING, db_column='cd_condicao')
+    cd_criterio_inicial = models.ForeignKey('TbCriteriosIniciaisNniss', models.DO_NOTHING, db_column='cd_criterio_inicial')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_condicoes_sitios_nniss'
+
+
+class TbConselho(models.Model):
+    cd_conselho = models.CharField(primary_key=True, max_length=10)
+    ds_conselho = models.CharField(max_length=50)
+    fl_medico = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_conselho'
+
+
+class TbConselhoProfissionalAns(models.Model):
+    cd_conselho_profissional = models.CharField(primary_key=True, max_length=10)
+    ds_conselho_profissional = models.CharField(max_length=60)
+    cd_termo = models.CharField(max_length=12, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_conselho_profissional_ans'
+
+
+class TbConsigSolicitaItem(models.Model):
+    cd_solicitacao = models.IntegerField(primary_key=True)
+    cd_material = models.IntegerField()
+    sequencial = models.IntegerField(blank=True, null=True)
+    qt_solicitada = models.IntegerField(blank=True, null=True)
+    qt_autorizada = models.IntegerField(blank=True, null=True)
+    fl_consig = models.CharField(max_length=1, blank=True, null=True)
+    cd_fornec_solicit = models.IntegerField(blank=True, null=True)
+    cd_fornec_autoriz = models.IntegerField(blank=True, null=True)
+    fl_transferido = models.CharField(max_length=1, blank=True, null=True)
+    fl_alto_custo = models.CharField(max_length=1, blank=True, null=True)
+    qt_transferida = models.IntegerField(blank=True, null=True)
+    qt_devolvida = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_consig_solicita_item'
+        unique_together = (('cd_solicitacao', 'cd_material'),)
+
+
+class TbConsigSolicitacao(models.Model):
+    cd_solicitacao = models.IntegerField(primary_key=True)
+    cd_setor_solicitante = models.CharField(max_length=6, blank=True, null=True)
+    cd_procedimento = models.CharField(max_length=8, blank=True, null=True)
+    cd_profissional = models.IntegerField(blank=True, null=True)
+    cd_paciente = models.IntegerField(blank=True, null=True)
+    cd_agenda = models.IntegerField(blank=True, null=True)
+    cd_convenio = models.IntegerField(blank=True, null=True)
+    cd_atendimento = models.IntegerField(blank=True, null=True)
+    dt_cirurgia = models.DateField(blank=True, null=True)
+    hr_cirurgia = models.IntegerField(blank=True, null=True)
+    dt_solicitacao = models.DateField(blank=True, null=True)
+    nm_paciente = models.CharField(max_length=45, blank=True, null=True)
+    fl_status = models.CharField(max_length=1, blank=True, null=True)
+    fl_transferido = models.CharField(max_length=1, blank=True, null=True)
+    ds_autorizacao = models.CharField(max_length=25, blank=True, null=True)
+    ds_observacao = models.CharField(max_length=240, blank=True, null=True)
+    ds_liberacao = models.CharField(max_length=25, blank=True, null=True)
+    ds_transferencia = models.CharField(max_length=25, blank=True, null=True)
+    cd_devolucao = models.IntegerField(blank=True, null=True)
+    cd_transferencia = models.IntegerField(blank=True, null=True)
+    cd_setor_controle = models.CharField(max_length=6, blank=True, null=True)
+    fl_origem_solicitacao = models.CharField(max_length=1, blank=True, null=True)
+    cd_nota = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_consig_solicitacao'
+
+
+class TbConstraints(models.Model):
+    cons_name = models.CharField(max_length=4000, blank=True, null=True)
+    tipo = models.CharField(max_length=1, blank=True, null=True)
+    owner = models.CharField(max_length=15, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_constraints'
+
+
+class TbConsumoDiario(models.Model):
+    cd_material = models.FloatField(primary_key=True)
+    cd_setor_controle = models.CharField(max_length=6)
+    cd_setor_destino = models.CharField(max_length=6)
+    dt_consumo = models.DateField()
+    qt_consumo = models.FloatField()
+    nu_protocolo = models.IntegerField(blank=True, null=True)
+    vl_consumo_unit = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_consumo_diario'
+        unique_together = (('cd_material', 'cd_setor_controle', 'cd_setor_destino', 'dt_consumo'),)
+
+
+class TbConsumoMatEqui(models.Model):
+    cd_serial = models.ForeignKey('TbEquipamentoLaboratorio', models.DO_NOTHING, db_column='cd_serial', primary_key=True)
+    cd_procedimento = models.ForeignKey('TbProcedimento', models.DO_NOTHING, db_column='cd_procedimento')
+    cd_material = models.FloatField()
+    qt_consumo = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_consumo_mat_equi'
+        unique_together = (('cd_serial', 'cd_procedimento', 'cd_material'),)
+
+
+class TbConsumoMatEquiVar(models.Model):
+    cd_serial = models.ForeignKey('TbEquipamentoLaboratorio', models.DO_NOTHING, db_column='cd_serial', primary_key=True)
+    cd_procedimento = models.ForeignKey('TbProcedimento', models.DO_NOTHING, db_column='cd_procedimento')
+    cd_material = models.FloatField()
+    cd_variavel = models.FloatField()
+    qt_consumo = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_consumo_mat_equi_var'
+        unique_together = (('cd_serial', 'cd_procedimento', 'cd_material', 'cd_variavel'),)
+
+
+class TbContaBancariaPessoa(models.Model):
+    cd_pessoa = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_pessoa', primary_key=True)
+    cd_banco = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_banco')
+    cd_agencia = models.ForeignKey(TbAgenciaBancaria, models.DO_NOTHING, db_column='cd_agencia')
+    cd_tipo_conta_bancaria = models.ForeignKey('TbTipoContaBancaria', models.DO_NOTHING, db_column='cd_tipo_conta_bancaria')
+    nu_conta_bancaria = models.CharField(max_length=20, blank=True, null=True)
+    cd_dv_conta = models.CharField(max_length=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_conta_bancaria_pessoa'
+
+
+class TbContaCorrenteCl(models.Model):
+    cd_cobranca = models.ForeignKey(TbCobrancaPaciente, models.DO_NOTHING, db_column='cd_cobranca', primary_key=True)
+    cd_ocorrencia = models.IntegerField()
+    dt_movimento = models.DateField()
+    cd_tipo_movimento = models.ForeignKey('TbTipoMovimento', models.DO_NOTHING, db_column='cd_tipo_movimento')
+    vl_movimento = models.DecimalField(max_digits=18, decimal_places=2)
+    vl_saldo = models.DecimalField(max_digits=18, decimal_places=2)
+    cd_setor = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor', blank=True, null=True)
+    cd_grupo_produto = models.ForeignKey('TbGrupoProduto', models.DO_NOTHING, db_column='cd_grupo_produto', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_conta_corrente_cl'
+        unique_together = (('cd_cobranca', 'cd_ocorrencia'),)
+
+
+class TbContaOperador(models.Model):
+    nm_usuario = models.CharField(primary_key=True, max_length=20)
+    cd_conta_bancaria = models.ForeignKey('TmContaCorrente', models.DO_NOTHING, db_column='cd_conta_bancaria')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_conta_operador'
+        unique_together = (('nm_usuario', 'cd_conta_bancaria'),)
+
+
+class TbContagemEncerrada(models.Model):
+    cd_setor = models.CharField(primary_key=True, max_length=6)
+    dt_referencia = models.CharField(max_length=6)
+    qt_ativos = models.FloatField(blank=True, null=True)
+    qt_contados = models.FloatField(blank=True, null=True)
+    cd_usuario = models.CharField(max_length=10, blank=True, null=True)
+    dt_encerramento = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_contagem_encerrada'
+        unique_together = (('cd_setor', 'dt_referencia'),)
+
+
+class TbContatoPessoa(models.Model):
+    cd_pessoa = models.ForeignKey('TbPessoa', models.DO_NOTHING, db_column='cd_pessoa', primary_key=True)
+    nm_contato_pessoa = models.CharField(max_length=45)
+    nr_cargo_contato = models.CharField(max_length=25, blank=True, null=True)
+    nu_telefone_contato = models.IntegerField(blank=True, null=True)
+    dt_nascimento_contato = models.DateField(blank=True, null=True)
+    ds_contato = models.ForeignKey('TbDescricaoContato', models.DO_NOTHING, db_column='ds_contato')
+    fl_status = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_contato_pessoa'
+        unique_together = (('cd_pessoa', 'nm_contato_pessoa'),)
+
+
+class TbContratoFornecedor(models.Model):
+    cd_fornecedor = models.CharField(primary_key=True, max_length=15)
+    cd_lista = models.CharField(max_length=15)
+    dt_contrato = models.DateField()
+    cd_forncd_hosp = models.FloatField(blank=True, null=True)
+    cd_forncd_psc = models.FloatField(blank=True, null=True)
+    fl_ativo = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_contrato_fornecedor'
+        unique_together = (('cd_fornecedor', 'cd_lista'),)
+
+
+class TbContribuicaoPrevidencia(models.Model):
+    dt_vigencia = models.DateField(primary_key=True)
+    qt_salarios = models.IntegerField()
+    nu_meses_classe = models.IntegerField()
+    vl_salario_base = models.DecimalField(max_digits=18, decimal_places=2)
+    pc_aliquota = models.DecimalField(max_digits=3, decimal_places=1)
+    vl_contribuicao = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_contribuicao_previdencia'
+        unique_together = (('dt_vigencia', 'qt_salarios'),)
+
+
+class TbControlaDesativados(models.Model):
+    cd_material = models.FloatField()
+    dt_desativado = models.DateField()
+    cd_usuario = models.CharField(max_length=15)
+    cd_setor_controle = models.CharField(max_length=10)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controla_desativados'
+
+
+class TbControlaProdutividade(models.Model):
+    cd_produtividade = models.IntegerField(primary_key=True)
+    mes_ano_referencia = models.DateField()
+    dt_processamento = models.DateField()
+    vl_total_bruto = models.DecimalField(max_digits=14, decimal_places=2, blank=True, null=True)
+    vl_total_desconto = models.DecimalField(max_digits=14, decimal_places=2, blank=True, null=True)
+    cd_usuario = models.CharField(max_length=30, blank=True, null=True)
+    terminal = models.CharField(max_length=30, blank=True, null=True)
+    cd_empresa = models.ForeignKey('TbFilial', models.DO_NOTHING, db_column='cd_empresa', blank=True, null=True)
+    dt_ini_vigencia = models.DateField(blank=True, null=True)
+    dt_fim_vigencia = models.DateField(blank=True, null=True)
+    dt_vencimento_folha = models.DateField(blank=True, null=True)
+    fl_complemento = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controla_produtividade'
+
+
+class TbControlaTimerPep(models.Model):
+    tipo = models.CharField(primary_key=True, max_length=50)
+    data_reg = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controla_timer_pep'
+        unique_together = (('tipo', 'data_reg'),)
+
+
+class TbControleAcessoVidaImagem(models.Model):
+    cd_operador = models.CharField(primary_key=True, max_length=20)
+    tp_operador = models.FloatField(blank=True, null=True)
+    cd_tela = models.CharField(max_length=20)
+    dt_registro = models.DateField(blank=True, null=True)
+    cd_operador_cadastro = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_acesso_vida_imagem'
+        unique_together = (('cd_operador', 'cd_tela'),)
+
+
+class TbControleDevolucao(models.Model):
+    cd_devolucao = models.FloatField(primary_key=True)
+    cd_material = models.ForeignKey('TbMatMed', models.DO_NOTHING, db_column='cd_material')
+    qt_material = models.FloatField(blank=True, null=True)
+    cd_codigo_barra = models.CharField(max_length=4000, blank=True, null=True)
+    cd_operador = models.CharField(max_length=12, blank=True, null=True)
+    dt_transacao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_devolucao'
+        unique_together = (('cd_devolucao', 'cd_material'),)
+
+
+class TbControleGeracaoLaudo(models.Model):
+    cd_id = models.FloatField(primary_key=True)
+    dt_inicio = models.DateField()
+    dt_fim = models.DateField()
+    fl_importado_hap = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_geracao_laudo'
+
+
+class TbControleGeracaoTempo(models.Model):
+    cd_id = models.FloatField(primary_key=True)
+    fl_tipo = models.CharField(max_length=1)
+    dt_inicio = models.DateField()
+    dt_fim = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_geracao_tempo'
+        unique_together = (('cd_id', 'fl_tipo'),)
+
+
+class TbControleGeracaoTiss(models.Model):
+    tp_guia_ans = models.ForeignKey('TbTipoGuiaAns', models.DO_NOTHING, db_column='tp_guia_ans')
+    nu_remessa = models.FloatField()
+    fl_status_prestador = models.NullBooleanField()
+    fl_geracao = models.CharField(max_length=1, blank=True, null=True)
+    nu_lote_envio = models.FloatField(blank=True, null=True)
+    nu_protocolo = models.FloatField(primary_key=True)
+    dt_geracao = models.DateField(blank=True, null=True)
+    cd_operador = models.CharField(max_length=10, blank=True, null=True)
+    nu_protocolo_operadora = models.FloatField(blank=True, null=True)
+    fl_status_operadora = models.NullBooleanField()
+    ds_mensagem_operadora = models.CharField(max_length=4000, blank=True, null=True)
+    dt_mensagem_operadora = models.DateField(blank=True, null=True)
+    nu_registro_operadora = models.FloatField(blank=True, null=True)
+    cd_glosa = models.FloatField(blank=True, null=True)
+    nu_grupo_guias = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_geracao_tiss'
+
+
+class TbControleIrrigacao(models.Model):
+    cd_atendimento = models.IntegerField(primary_key=True)
+    cd_ocorrencia_plano = models.IntegerField()
+    cd_ordem_prescricao = models.IntegerField()
+    cd_ordem_irrigacao = models.IntegerField()
+    dt_inicio = models.DateField(blank=True, null=True)
+    hr_inicio = models.IntegerField(blank=True, null=True)
+    hr_termino = models.IntegerField(blank=True, null=True)
+    vl_liquido_infundido = models.FloatField(blank=True, null=True)
+    vl_liquido_drenado = models.FloatField(blank=True, null=True)
+    vl_balanco_parcial = models.FloatField(blank=True, null=True)
+    vl_balanco_total = models.FloatField(blank=True, null=True)
+    cd_retencao = models.CharField(max_length=2, blank=True, null=True)
+    cd_aspecto = models.CharField(max_length=2, blank=True, null=True)
+    dt_transacao = models.DateField(blank=True, null=True)
+    cd_profissional_valida = models.IntegerField(blank=True, null=True)
+    vl_soro_retido = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_irrigacao'
+        unique_together = (('cd_atendimento', 'cd_ocorrencia_plano', 'cd_ordem_prescricao', 'cd_ordem_irrigacao'),)
+
+
+class TbControleRepasseAntecipado(models.Model):
+    cd_unidade_atendimento = models.CharField(primary_key=True, max_length=3)
+    cd_convenio = models.CharField(max_length=4)
+    dt_antecipacao = models.DateField()
+    cd_pessoa_cobra = models.FloatField(blank=True, null=True)
+    cd_usuario = models.CharField(max_length=30, blank=True, null=True)
+    cd_terminal = models.CharField(max_length=30, blank=True, null=True)
+    dt_geracao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_repasse_antecipado'
+        unique_together = (('cd_unidade_atendimento', 'cd_convenio', 'dt_antecipacao'),)
+
+
+class TbControleRepasseMedico(models.Model):
+    nu_remessa = models.FloatField(primary_key=True)
+    cd_usuario = models.CharField(max_length=30, blank=True, null=True)
+    cd_terminal = models.CharField(max_length=30, blank=True, null=True)
+    dt_geracao = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_repasse_medico'
+
+
+class TbControleSaldoDosagem(models.Model):
+    cd_setor = models.ForeignKey('TmSetor', models.DO_NOTHING, db_column='cd_setor', primary_key=True)
+    cd_material = models.IntegerField()
+    cd_ocorrencia = models.IntegerField()
+    dt_inicio_uso = models.DateField(blank=True, null=True)
+    hr_inicio_uso = models.IntegerField(blank=True, null=True)
+    qt_dosagem_apresentacao = models.FloatField(blank=True, null=True)
+    cd_unidade_dosagem = models.CharField(max_length=2, blank=True, null=True)
+    qt_volume_ml = models.FloatField(blank=True, null=True)
+    qt_horas_estabilidade = models.IntegerField(blank=True, null=True)
+    qt_saldo_ml = models.FloatField(blank=True, null=True)
+    dt_fim_uso = models.DateField(blank=True, null=True)
+    hr_fim_uso = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_saldo_dosagem'
+        unique_together = (('cd_setor', 'cd_material', 'cd_ocorrencia'),)
+
+
+class TbControleUsuarios(models.Model):
+    cod_usuario = models.ForeignKey('TbOperador', models.DO_NOTHING, db_column='cod_usuario', blank=True, null=True)
+    ult_acesso = models.DateField(blank=True, null=True)
+    ult_atualizacao = models.DateField(blank=True, null=True)
+    cd_funcionario = models.IntegerField(blank=True, null=True)
+    nu_matricula = models.IntegerField(blank=True, null=True)
+    nm_operador = models.CharField(max_length=45, blank=True, null=True)
+    cd_acesso = models.CharField(max_length=45, blank=True, null=True)
+    cd_acesso_db = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_controle_usuarios'
+
+
+class TbConvenioAgendaIntern(models.Model):
+    cd_agenda = models.ForeignKey('TmAgendaInternacao', models.DO_NOTHING, db_column='cd_agenda', primary_key=True)
+    cd_convenio_agendado = models.BooleanField()
+    cd_convenio_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio_base')
+    cd_plano_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano_base')
+    cd_convenio = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio')
+    cd_plano = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano')
+    nu_carteira_convenio = models.CharField(max_length=20, blank=True, null=True)
+    dt_validade = models.DateField(blank=True, null=True)
+    cd_categoria = models.CharField(max_length=1, blank=True, null=True)
+    cd_franquia = models.CharField(max_length=2, blank=True, null=True)
+    cd_tabela_proced = models.ForeignKey('TbTabelaProcedimento', models.DO_NOTHING, db_column='cd_tabela_proced', blank=True, null=True)
+    pc_desconto_proced = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_taxa = models.ForeignKey('TbTabelaTaxa', models.DO_NOTHING, db_column='cd_tabela_taxa', blank=True, null=True)
+    pc_desconto_taxa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_mat_med = models.ForeignKey('TbTabelaMatMed', models.DO_NOTHING, db_column='cd_tabela_mat_med', blank=True, null=True)
+    pc_desconto_mat_med = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_medicamento = models.ForeignKey('TbTabelaMatMed', models.DO_NOTHING, db_column='cd_tabela_medicamento', blank=True, null=True)
+    pc_desconto_medicamento = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    pc_desconto = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_agenda_intern'
+        unique_together = (('cd_agenda', 'cd_convenio_base', 'cd_plano_base'), ('cd_agenda', 'cd_convenio_agendado'),)
+
+
+class TbConvenioAgendado(models.Model):
+    cd_convenio_agendado = models.BooleanField()
+    cd_agenda = models.ForeignKey('TmAgendaMedica', models.DO_NOTHING, db_column='cd_agenda', primary_key=True)
+    cd_convenio_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio_base')
+    cd_plano_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano_base')
+    cd_convenio = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio')
+    cd_plano = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano')
+    nu_carteira_convenio = models.CharField(max_length=20, blank=True, null=True)
+    dt_validade = models.DateField(blank=True, null=True)
+    cd_categoria = models.CharField(max_length=1, blank=True, null=True)
+    cd_franquia = models.CharField(max_length=2, blank=True, null=True)
+    cd_tabela_proced = models.ForeignKey('TbTabelaProcedimento', models.DO_NOTHING, db_column='cd_tabela_proced', blank=True, null=True)
+    pc_desconto_proced = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_taxa = models.ForeignKey('TbTabelaTaxa', models.DO_NOTHING, db_column='cd_tabela_taxa', blank=True, null=True)
+    pc_desconto_taxa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_mat_med = models.ForeignKey('TbTabelaMatMed', models.DO_NOTHING, db_column='cd_tabela_mat_med', blank=True, null=True)
+    pc_desconto_mat_med = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    pc_desconto = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_agendado'
+        unique_together = (('cd_agenda', 'cd_convenio_base', 'cd_plano_base'), ('cd_agenda', 'cd_convenio_agendado'),)
+
+
+class TbConvenioClinica(models.Model):
+    cd_convenio = models.ForeignKey('TmConvenio', models.DO_NOTHING, db_column='cd_convenio', primary_key=True)
+    cd_clinica = models.ForeignKey(TbClinica, models.DO_NOTHING, db_column='cd_clinica')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_clinica'
+        unique_together = (('cd_convenio', 'cd_clinica'),)
+
+
+class TbConvenioFaturamento(models.Model):
+    cd_grupo = models.ForeignKey('TbGrupoFaturamento', models.DO_NOTHING, db_column='cd_grupo', primary_key=True)
+    cd_convenio = models.ForeignKey('TmConvenio', models.DO_NOTHING, db_column='cd_convenio')
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_faturamento'
+        unique_together = (('cd_grupo', 'cd_convenio'),)
+
+
+class TbConvenioFilialCruzado(models.Model):
+    cd_convenio = models.ForeignKey('TmConvenio', models.DO_NOTHING, db_column='cd_convenio', primary_key=True)
+    cd_filial = models.ForeignKey('TbFilial', models.DO_NOTHING, db_column='cd_filial')
+    cd_usuario = models.CharField(max_length=30)
+    dt_atualizacao = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_filial_cruzado'
+
+
+class TbConvenioPagador(models.Model):
+    cd_convenio_pagador = models.BooleanField()
+    cd_atendimento = models.ForeignKey('TmAtendimento', models.DO_NOTHING, db_column='cd_atendimento', primary_key=True)
+    cd_convenio_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio_base')
+    cd_plano_base = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano_base')
+    cd_convenio = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_convenio')
+    cd_plano = models.ForeignKey('TbPlanoConvenio', models.DO_NOTHING, db_column='cd_plano')
+    nu_carteira_convenio = models.CharField(max_length=20, blank=True, null=True)
+    dt_validade = models.DateField(blank=True, null=True)
+    cd_tabela_proced = models.ForeignKey('TbTabelaProcedimento', models.DO_NOTHING, db_column='cd_tabela_proced', blank=True, null=True)
+    pc_desconto_proced = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_taxa = models.ForeignKey('TbTabelaTaxa', models.DO_NOTHING, db_column='cd_tabela_taxa', blank=True, null=True)
+    pc_desconto_taxa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_mat_med = models.ForeignKey('TbTabelaMatMed', models.DO_NOTHING, db_column='cd_tabela_mat_med', blank=True, null=True)
+    pc_desconto_mat_med = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    pc_desconto = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_tabela_medicamento = models.ForeignKey('TbTabelaMatMed', models.DO_NOTHING, db_column='cd_tabela_medicamento', blank=True, null=True)
+    pc_desconto_medicamento = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cd_um_proced = models.ForeignKey('TbUm', models.DO_NOTHING, db_column='cd_um_proced', blank=True, null=True)
+    cd_um_taxa = models.ForeignKey('TbUm', models.DO_NOTHING, db_column='cd_um_taxa')
+    cd_um_mat_med = models.ForeignKey('TbUm', models.DO_NOTHING, db_column='cd_um_mat_med')
+    cd_um_medicamento = models.ForeignKey('TbUm', models.DO_NOTHING, db_column='cd_um_medicamento')
+    cd_categoria = models.CharField(max_length=1, blank=True, null=True)
+    cd_franquia = models.CharField(max_length=2, blank=True, null=True)
+    nm_empresa_conveniada = models.CharField(max_length=45, blank=True, null=True)
+    pc_acrescimo_taxa = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    pc_acrescimo_mat_med = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    pc_acrescimo_medicamento = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tb_convenio_pagador'
+        unique_together = (('cd_atendimento', 'cd_convenio_base', 'cd_plano_base'), ('cd_atendimento', 'cd_convenio_pagador'),)
