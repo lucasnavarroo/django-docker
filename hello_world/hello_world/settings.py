@@ -78,20 +78,16 @@ WSGI_APPLICATION = 'hello_world.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # },
-
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+
+    'hapvida': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 10.1.22.131)(PORT = 1521)))(CONNECT_DATA =(SID = hospital)))',
         'USER': 'HUMASTER',
-        'PASSWORD': 'huhospdes',
-        # 'USER': 'HUMASTER',
-        # 'PASSWORD': 'huhospdes',
-        # 'NAME': 'hospital ',
-        # 'OPTIONS': {
+        'PASSWORD': 'huhospdes'
     } 
 }
 
